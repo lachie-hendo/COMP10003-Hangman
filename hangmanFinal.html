@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman</title>
+</head>
+<body>
+    <script>
+        //Selects a random word from an array
+        function getRandomWord(array) {
+            const randomValue = Math.floor(Math.random() * array.length);
+            const codeNumber = array[randomValue];
+            return codeNumber;
+        }
+
+        //Creates a new array consisting of the array turned into underscores
+        function convertToUnderscores(array) {
+            const newArray = [];
+            for (index = 0; index < array.length; index++) {
+                newArray.push("_");
+            }
+            return newArray;
+        }
+
+        //Checks if a value is a letter from a to z, regardless of its casing
+        //Upper case letters are still valid, as we convert them to lowercase later
+        function isValidLetter(string) {
+            return string.length === 1 && string.match(/[a-z]/i);
+        }
+
+        // This is our array of possible words to guess - Theme is capital cities
+        let wordOptions = [
+            "rome",
+            "lima",
+            "tokyo", 
+            "cairo", 
+            "athens", 
+            "vienna", 
+            "beijing",    
+            "budapest", 
+            "ljubljana", 
+            "reykjavik", 
+            "bratislava",  
+            "antananarivo"
+        ];
+
+        console.log("Welcome to Hangman! One player thinks of a word and the other tries to guess it by guessing letters. Each incorrect guess brings you closer to being 'hanged'.");
+        console.log("You have 10 lives. If you guess 10 letters that are not in the secret word, you lose. If you guess the word before 10 incorrect guesses, you win. Good Luck!");
+
+        let codeWord = "Default";
+        let gameMode = "";
+
+        // Loops until the input is valid
+        while (gameMode !== "s" && gameMode !== "m") {
+            console.log("Would you like to play Solo, or Multiplayer?");
+            gameMode = prompt("Please type the letter s to play Solo, or m to play Multiplayer.");
+            gameMode = gameMode.toLowerCase();
+        
+            if (gameMode === "s") {
+                codeWord = getRandomWord(wordOptions);
+            } else if (gameMode === "m") {
+                codeWord = prompt("Please choose a secret word");
+                codeWord = codeWord.toLowerCase();
+            } else {
+                console.log("Sorry, I didn't catch that. Please enter either s (solo) or m (multiplayer).");
+            }
+        }
+
+        let hiddenWord = convertToUnderscores(codeWord);
+        console.log(hiddenWord);
+
+        //Add guessed letters to an array of previous guesses, which will be printed as a hint for the user
+        let previousGuesses = [];
+        let wrongGuesses = 10;
+        let gameOver = false;
+
+        while (!gameOver) {
+            //User enters a letter, code searches codeWord to see if the letter is in codeWord.
+            console.log("Please enter a guess.");
+            let userGuess = prompt("Please guess a letter.");
+            userGuess = userGuess.toLowerCase();
+            if (isValidLetter(userGuess)) {
+                if (codeWord.includes(userGuess)) {
+                    if (!previousGuesses.includes(userGuess)) {
+                        previousGuesses.push(userGuess);
+                    } else {
+                        //If letter has already been guessed, remind user that they already guessed that one
+                        console.log("Whoops! You already guessed that one!");
+                    }
+                    for (index = 0; index < codeWord.length; index++) {
+                        //If letter is in codeWord, replace that letter's index in codeWord with the equal index in hiddenWord
+                        if (codeWord[index] === userGuess) {
+                            hiddenWord[index] = userGuess;
+                        }
+                    }
+                } else {
+                    //Else if letter is not in codeword, number of wrong guesses remaining decreases by one, and the hangman updates
+                    if (!codeWord.includes(userGuess)) {
+                        if (!previousGuesses.includes(userGuess)) {
+                            previousGuesses.push(userGuess);
+                            wrongGuesses = wrongGuesses - 1;
+                        } else {
+                            //If letter has already been guessed, remind user that this has already been guessed
+                            console.log("Whoops! You already guessed that one!");
+                        }
+                    }
+                }
+            } else {
+                console.log("Sorry, I didn't catch that.");
+            }
+            //Every time a letter is guessed, print the previous guesses that have been made, as well as the updated hidden word, and then the hangman
+            if (gameOver == false) {
+                console.log("Previous guesses are: " + previousGuesses);
+                console.log(hiddenWord);
+                console.log("You have " + wrongGuesses + " incorrect guesses remaining.");
+                if (wrongGuesses == 0) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |    \\_|_/   ");
+                    console.log("       |      |     ");
+                    console.log("       |     / \\    ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 1) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |    \\_|_/   ");
+                    console.log("       |      |     ");
+                    console.log("       |     /      ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 2) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |    \\_|_/   ");
+                    console.log("       |      |     ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 3) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |    \\_|     ");
+                    console.log("       |      |     ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 4) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |      |     ");
+                    console.log("       |      |     ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 5) {
+                    console.log("       _______      ");
+                    console.log("       |     |_     ");
+                    console.log("       |     / \\    ");
+                    console.log("       |     \\_/    ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 6) {
+                    console.log("       _______      ");
+                    console.log("       |     |      ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 7) {
+                    console.log("       _______      ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 8) {
+                    console.log("                    ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("       |            ");
+                    console.log("_______|____________");
+                } else if (wrongGuesses == 9) {
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("___________________ ");
+                } else if (wrongGuesses == 10) {
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                    console.log("                    ");
+                }
+                console.log("");
+            }
+            //If loop ends with codeWord == hiddenWord, then congratulations, you won!
+            if (hiddenWord.join("") === codeWord) {
+                console.log("Congratulations, you won! The correct word is " + codeWord);
+                gameOver = true;
+            }
+            //If loop ends with number of wrong guesses == 0, then sorry, you lost
+            if (wrongGuesses === 0) {
+                console.log("Game over! You have been hanged. The correct word was " + codeWord);
+                gameOver = true;
+            }
+        }
+    </script>
+</body>
+</html>
